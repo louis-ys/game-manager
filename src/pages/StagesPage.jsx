@@ -18,11 +18,16 @@ function getStatusClass(status) {
 export default function StagesPage() {
   return (
     <div>
-      <header className="mb-8">
-        <h2 className="text-3xl font-bold">Stages</h2>
-        <p className="mt-2 text-slate-500">
-          View and manage stage information.
-        </p>
+      <header className="mb-8 flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl font-bold">Stages</h2>
+          <p className="mt-2 text-slate-500">
+            View and manage stage information.
+          </p>
+        </div>
+        <button className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
+          + Add Stage
+        </button>
       </header>
 
       <div className="rounded-2xl bg-white p-6 shadow-sm">
