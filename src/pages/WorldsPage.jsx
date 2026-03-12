@@ -51,6 +51,13 @@ export default function WorldsPage() {
     setShowForm(false)
   }
 
+  function handleDelete(id) {
+    const confirmed = window.confirm('Are you sure you want to delete this world?')
+    if (!confirmed) return
+
+    setWorldList(prev => prev.filter(w => w.id !== id))
+  }
+
   return (
     <div>
       <header className="mb-8 flex items-center justify-between">
@@ -128,14 +135,24 @@ export default function WorldsPage() {
           {worldList.map(world => (
             <div
               key={world.id}
-              className="rounded-xl border border-slate-200 p-4"
+              className="flex items-start justify-between rounded-xl border border-slate-200 p-4"
             >
-              <p className="font-medium">
-                World {world.orderNo} - {world.title}
-              </p>
-              <p className="mt-1 text-sm text-slate-500">
-                {world.description}
-              </p>
+              <div>
+                <p className="font-medium">
+                  World {world.orderNo} - {world.title}
+                </p>
+                <p className="mt-1 text-sm text-slate-500">
+                  {world.description}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                className="ml-4 rounded-lg bg-red-600 px-3 py-1 text-sm text-white hover:bg-red-700"
+                onClick={() => handleDelete(world.id)}
+              >
+                Delete
+              </button>
             </div>
           ))}
         </div>

@@ -48,29 +48,26 @@ export default function StagesPage() {
   }
 
   function handleSave() {
-    // stageCode나 title이 비어 있으면 저장하지 않음
     if (!stageCode.trim() || !title.trim()) {
       return
     }
 
-    // 새 id 계산
     const nextId =
-      stageList.length > 0 ? Math.max(...stageList.map(stage => stage.id)) + 1 : 1
+      stageList.length > 0
+        ? Math.max(...stageList.map(stage => stage.id)) + 1
+        : 1
 
-    // 새 스테이지 객체 생성
     const newStage = {
       id: nextId,
-      worldId: 1, // 지금은 임시 고정값, 나중에 world 선택 기능 추가 가능
+      worldId: 1,
       stageCode: stageCode.trim(),
       title: title.trim(),
       difficulty,
       status,
     }
 
-    // 기존 목록에 새 스테이지 추가
     setStageList(prev => [...prev, newStage])
 
-    // 입력값 초기화 후 폼 닫기
     resetForm()
     setShowForm(false)
   }
@@ -78,6 +75,15 @@ export default function StagesPage() {
   function handleCancel() {
     resetForm()
     setShowForm(false)
+  }
+
+  function handleDelete(id) {
+    const confirmed = window.confirm(
+      'Are you sure you want to delete this stage?'
+    )
+    if (confirmed) {
+      setStageList(prev => prev.filter(stage => stage.id !== id))
+    }
   }
 
   return (
@@ -107,7 +113,9 @@ export default function StagesPage() {
 
           <div className="space-y-4">
             <div>
-              <label className="mb-1 block text-sm font-medium">Stage Code</label>
+              <label className="mb-1 block text-sm font-medium">
+                Stage Code
+              </label>
               <input
                 type="text"
                 value={stageCode}
@@ -129,7 +137,9 @@ export default function StagesPage() {
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium">Difficulty</label>
+              <label className="mb-1 block text-sm font-medium">
+                Difficulty
+              </label>
               <select
                 value={difficulty}
                 onChange={e => setDifficulty(e.target.value)}
@@ -178,25 +188,36 @@ export default function StagesPage() {
 
       <div className="rounded-2xl bg-white p-6 shadow-sm">
         <p className="text-lg font-semibold">Stage List</p>
+
         <div className="mt-4 space-y-3">
           {stageList.map(stage => (
             <div
               key={stage.id}
-              className="rounded-xl border border-slate-200 p-4"
+              className="flex items-start justify-between rounded-xl border border-slate-200 p-4"
             >
-              <p className="font-medium">
-                {stage.stageCode} - {stage.title}
-              </p>
+              <div>
+                <p className="font-medium">
+                  {stage.stageCode} - {stage.title}
+                </p>
 
-              <p className="mt-1 text-sm text-slate-500">
-                Difficulty: {stage.difficulty}
-              </p>
+                <p className="mt-1 text-sm text-slate-500">
+                  Difficulty: {stage.difficulty}
+                </p>
 
-              <p className="mt-1">
-                <span className={getStatusClass(stage.status)}>
-                  {getStatusLabel(stage.status)}
-                </span>
-              </p>
+                <p className="mt-1">
+                  <span className={getStatusClass(stage.status)}>
+                    {getStatusLabel(stage.status)}
+                  </span>
+                </p>
+              </div>
+
+              <button
+                type="button"
+                className="ml-4 rounded-lg bg-red-600 px-3 py-1 text-sm text-white hover:bg-red-700"
+                onClick={() => handleDelete(stage.id)}
+              >
+                Delete
+              </button>
             </div>
           ))}
         </div>
