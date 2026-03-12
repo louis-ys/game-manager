@@ -1,3 +1,5 @@
+import { worlds } from '../data/mockData'
+
 export default function WorldsPage() {
   return (
     <div>
@@ -11,19 +13,19 @@ export default function WorldsPage() {
       <div className="rounded-2xl bg-white p-6 shadow-sm">
         <p className="text-lg font-semibold">World List</p>
         <div className="mt-4 space-y-3">
-          <div className="rounded-xl border border-slate-200 p-4">
-            <p className="font-medium">World 1 - Warm Garden</p>
-            <p className="mt-1 text-sm text-slate-500">
-              Introductory world for beginner players.
-            </p>
-          </div>
-
-          <div className="rounded-xl border border-slate-200 p-4">
-            <p className="font-medium">World 2 - Cat Forest</p>
-            <p className="mt-1 text-sm text-slate-500">
-              A forest-themed world with higher difficulty.
-            </p>
-          </div>
+          {worlds.map(world => (
+            <div
+              key={world.id}
+              className="rounded-xl border border-slate-200 p-4"
+            >
+              <p className="font-medium">
+                World {world.orderNo} - {world.title}
+              </p>
+              <p className="mt-1 text-sm text-slate-500">
+                {world.description}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
     </div>

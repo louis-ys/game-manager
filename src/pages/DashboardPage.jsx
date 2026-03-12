@@ -1,4 +1,11 @@
+import { worlds, stages } from '../data/mockData'
+
 export default function DashboardPage() {
+  const totalWorlds = worlds.length
+  const totalStages = stages.length
+  const developingCount = stages.filter(stage => stage.status === 'developing').length
+  const doneCount = stages.filter(stage => stage.status === 'done').length
+
   return (
     <>
       <header className="mb-8">
@@ -11,22 +18,22 @@ export default function DashboardPage() {
       <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         <div className="rounded-2xl bg-white p-6 shadow-sm">
           <p className="text-sm text-slate-500">Total Worlds</p>
-          <p className="mt-2 text-3xl font-bold">2</p>
+          <p className="mt-2 text-3xl font-bold">{totalWorlds}</p>
         </div>
 
         <div className="rounded-2xl bg-white p-6 shadow-sm">
           <p className="text-sm text-slate-500">Total Stages</p>
-          <p className="mt-2 text-3xl font-bold">12</p>
+          <p className="mt-2 text-3xl font-bold">{totalStages}</p>
         </div>
 
         <div className="rounded-2xl bg-white p-6 shadow-sm">
           <p className="text-sm text-slate-500">Developing</p>
-          <p className="mt-2 text-3xl font-bold">5</p>
+          <p className="mt-2 text-3xl font-bold">{developingCount}</p>
         </div>
 
         <div className="rounded-2xl bg-white p-6 shadow-sm">
           <p className="text-sm text-slate-500">Completed</p>
-          <p className="mt-2 text-3xl font-bold">3</p>
+          <p className="mt-2 text-3xl font-bold">{doneCount}</p>
         </div>
       </section>
 
