@@ -1,5 +1,20 @@
 import { stages } from '../data/mockData'
 
+function getStatusClass(status) {
+  switch (status.toLowerCase()) {
+    case 'planning':
+      return 'inline-block px-2 py-1 text-xs font-semibold rounded-full bg-gray-200 text-gray-800'
+    case 'developing':
+      return 'inline-block px-2 py-1 text-xs font-semibold rounded-full bg-blue-200 text-blue-800'
+    case 'testing':
+      return 'inline-block px-2 py-1 text-xs font-semibold rounded-full bg-orange-200 text-orange-800'
+    case 'done':
+      return 'inline-block px-2 py-1 text-xs font-semibold rounded-full bg-green-200 text-green-800'
+    default:
+      return 'inline-block px-2 py-1 text-xs font-semibold rounded-full bg-gray-200 text-gray-800'
+  }
+}
+
 export default function StagesPage() {
   return (
     <div>
@@ -24,8 +39,8 @@ export default function StagesPage() {
               <p className="mt-1 text-sm text-slate-500">
                 Difficulty: {stage.difficulty}
               </p>
-              <p className="mt-1 text-sm text-slate-500">
-                Status: {stage.status}
+              <p className="mt-1">
+                <span className={getStatusClass(stage.status)}>{stage.status}</span>
               </p>
             </div>
           ))}
