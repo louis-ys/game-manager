@@ -3,6 +3,53 @@ import { worlds } from '../data/mockData'
 
 export default function WorldsPage() {
   const [showForm, setShowForm] = useState(false)
+  const [worldList, setWorldList] = useState(worlds)
+  const [title, setTitle] = useState('')
+  const [description, setDescription] = useState('')
+
+  function resetForm() {
+    setTitle('')
+    setDescription('')
+  }
+
+  function handleSave() {
+    // 제목이나 설명이 비어 있으면 저장하지 않음
+    if (!title.trim() || !description.trim()) {
+      return
+    }
+
+    // 새로 추가될 id 계산
+    const nextId =
+      worldList.length > 0 ? Math.max(...worldList.map(w => w.id)) + 1 : 1
+
+    // 새로 추가될 월드 순서 번호 계산
+    const nextOrder =
+      worldList.length > 0
+        ? Math.max(...worldList.map(w => w.orderNo)) + 1
+        : 1
+
+    // 새 월드 객체 생성
+    const newWorld = {
+      id: nextId,
+      title: title.trim(),
+      description: description.trim(),
+      orderNo: nextOrder,
+    }
+
+    // 기존 목록에 새 월드 추가
+    setWorldList(prev => [...prev, newWorld])
+
+    // 입력값 초기화
+    resetForm()
+
+    // 폼 닫기
+    setShowForm(false)
+  }
+
+  function handleCancel() {
+    resetForm()
+    setShowForm(false)
+  }
 
   return (
     <div>
@@ -34,6 +81,8 @@ export default function WorldsPage() {
               <label className="mb-1 block text-sm font-medium">Title</label>
               <input
                 type="text"
+                value={title}
+                onChange={e => setTitle(e.target.value)}
                 className="w-full rounded border border-slate-300 p-2"
                 placeholder="Enter world title"
               />
@@ -44,6 +93,8 @@ export default function WorldsPage() {
                 Description
               </label>
               <textarea
+                value={description}
+                onChange={e => setDescription(e.target.value)}
                 className="w-full rounded border border-slate-300 p-2"
                 rows="3"
                 placeholder="Brief description"
@@ -54,6 +105,7 @@ export default function WorldsPage() {
               <button
                 type="button"
                 className="rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700"
+                onClick={handleSave}
               >
                 Save
               </button>
@@ -61,7 +113,7 @@ export default function WorldsPage() {
               <button
                 type="button"
                 className="rounded-lg bg-gray-300 px-4 py-2 hover:bg-gray-400"
-                onClick={() => setShowForm(false)}
+                onClick={handleCancel}
               >
                 Cancel
               </button>
@@ -73,7 +125,7 @@ export default function WorldsPage() {
       <div className="rounded-2xl bg-white p-6 shadow-sm">
         <p className="text-lg font-semibold">World List</p>
         <div className="mt-4 space-y-3">
-          {worlds.map(world => (
+          {worldList.map(world => (
             <div
               key={world.id}
               className="rounded-xl border border-slate-200 p-4"

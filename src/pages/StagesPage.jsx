@@ -16,8 +16,69 @@ function getStatusClass(status) {
   }
 }
 
+function getStatusLabel(status) {
+  switch (status) {
+    case 'planning':
+      return 'Planning'
+    case 'developing':
+      return 'Developing'
+    case 'testing':
+      return 'Testing'
+    case 'done':
+      return 'Done'
+    default:
+      return status
+  }
+}
+
 export default function StagesPage() {
   const [showForm, setShowForm] = useState(false)
+  const [stageList, setStageList] = useState(stages)
+
+  const [stageCode, setStageCode] = useState('')
+  const [title, setTitle] = useState('')
+  const [difficulty, setDifficulty] = useState('easy')
+  const [status, setStatus] = useState('planning')
+
+  function resetForm() {
+    setStageCode('')
+    setTitle('')
+    setDifficulty('easy')
+    setStatus('planning')
+  }
+
+  function handleSave() {
+    // stageCode나 title이 비어 있으면 저장하지 않음
+    if (!stageCode.trim() || !title.trim()) {
+      return
+    }
+
+    // 새 id 계산
+    const nextId =
+      stageList.length > 0 ? Math.max(...stageList.map(stage => stage.id)) + 1 : 1
+
+    // 새 스테이지 객체 생성
+    const newStage = {
+      id: nextId,
+      worldId: 1, // 지금은 임시 고정값, 나중에 world 선택 기능 추가 가능
+      stageCode: stageCode.trim(),
+      title: title.trim(),
+      difficulty,
+      status,
+    }
+
+    // 기존 목록에 새 스테이지 추가
+    setStageList(prev => [...prev, newStage])
+
+    // 입력값 초기화 후 폼 닫기
+    resetForm()
+    setShowForm(false)
+  }
+
+  function handleCancel() {
+    resetForm()
+    setShowForm(false)
+  }
 
   return (
     <div>
@@ -49,6 +110,8 @@ export default function StagesPage() {
               <label className="mb-1 block text-sm font-medium">Stage Code</label>
               <input
                 type="text"
+                value={stageCode}
+                onChange={e => setStageCode(e.target.value)}
                 className="w-full rounded border border-slate-300 p-2"
                 placeholder="e.g. 1-3"
               />
@@ -58,6 +121,8 @@ export default function StagesPage() {
               <label className="mb-1 block text-sm font-medium">Title</label>
               <input
                 type="text"
+                value={title}
+                onChange={e => setTitle(e.target.value)}
                 className="w-full rounded border border-slate-300 p-2"
                 placeholder="Stage title"
               />
@@ -65,7 +130,11 @@ export default function StagesPage() {
 
             <div>
               <label className="mb-1 block text-sm font-medium">Difficulty</label>
-              <select className="w-full rounded border border-slate-300 p-2">
+              <select
+                value={difficulty}
+                onChange={e => setDifficulty(e.target.value)}
+                className="w-full rounded border border-slate-300 p-2"
+              >
                 <option value="easy">Easy</option>
                 <option value="normal">Normal</option>
                 <option value="hard">Hard</option>
@@ -74,7 +143,11 @@ export default function StagesPage() {
 
             <div>
               <label className="mb-1 block text-sm font-medium">Status</label>
-              <select className="w-full rounded border border-slate-300 p-2">
+              <select
+                value={status}
+                onChange={e => setStatus(e.target.value)}
+                className="w-full rounded border border-slate-300 p-2"
+              >
                 <option value="planning">Planning</option>
                 <option value="developing">Developing</option>
                 <option value="testing">Testing</option>
@@ -86,6 +159,7 @@ export default function StagesPage() {
               <button
                 type="button"
                 className="rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700"
+                onClick={handleSave}
               >
                 Save
               </button>
@@ -93,7 +167,7 @@ export default function StagesPage() {
               <button
                 type="button"
                 className="rounded-lg bg-gray-300 px-4 py-2 hover:bg-gray-400"
-                onClick={() => setShowForm(false)}
+                onClick={handleCancel}
               >
                 Cancel
               </button>
@@ -105,7 +179,7 @@ export default function StagesPage() {
       <div className="rounded-2xl bg-white p-6 shadow-sm">
         <p className="text-lg font-semibold">Stage List</p>
         <div className="mt-4 space-y-3">
-          {stages.map(stage => (
+          {stageList.map(stage => (
             <div
               key={stage.id}
               className="rounded-xl border border-slate-200 p-4"
@@ -113,12 +187,14 @@ export default function StagesPage() {
               <p className="font-medium">
                 {stage.stageCode} - {stage.title}
               </p>
+
               <p className="mt-1 text-sm text-slate-500">
                 Difficulty: {stage.difficulty}
               </p>
+
               <p className="mt-1">
                 <span className={getStatusClass(stage.status)}>
-                  {stage.status}
+                  {getStatusLabel(stage.status)}
                 </span>
               </p>
             </div>
