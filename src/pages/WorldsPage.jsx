@@ -13,22 +13,18 @@ export default function WorldsPage() {
   }
 
   function handleSave() {
-    // 제목이나 설명이 비어 있으면 저장하지 않음
     if (!title.trim() || !description.trim()) {
       return
     }
 
-    // 새로 추가될 id 계산
     const nextId =
       worldList.length > 0 ? Math.max(...worldList.map(w => w.id)) + 1 : 1
 
-    // 새로 추가될 월드 순서 번호 계산
     const nextOrder =
       worldList.length > 0
         ? Math.max(...worldList.map(w => w.orderNo)) + 1
         : 1
 
-    // 새 월드 객체 생성
     const newWorld = {
       id: nextId,
       title: title.trim(),
@@ -36,13 +32,8 @@ export default function WorldsPage() {
       orderNo: nextOrder,
     }
 
-    // 기존 목록에 새 월드 추가
     setWorldList(prev => [...prev, newWorld])
-
-    // 입력값 초기화
     resetForm()
-
-    // 폼 닫기
     setShowForm(false)
   }
 
@@ -58,6 +49,19 @@ export default function WorldsPage() {
     setWorldList(prev => prev.filter(w => w.id !== id))
   }
 
+  function handleExportJson() {
+    const jsonString = JSON.stringify(worldList, null, 2)
+    const blob = new Blob([jsonString], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+
+    const link = document.createElement('a')
+    link.href = url
+    link.download = 'worlds.json'
+    link.click()
+
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <div>
       <header className="mb-8 flex items-center justify-between">
@@ -68,15 +72,25 @@ export default function WorldsPage() {
           </p>
         </div>
 
-        {!showForm && (
+        <div className="flex gap-2">
           <button
             type="button"
-            className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-            onClick={() => setShowForm(true)}
+            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-slate-700 hover:bg-slate-100"
+            onClick={handleExportJson}
           >
-            + Add World
+            Export JSON
           </button>
-        )}
+
+          {!showForm && (
+            <button
+              type="button"
+              className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+              onClick={() => setShowForm(true)}
+            >
+              + Add World
+            </button>
+          )}
+        </div>
       </header>
 
       {showForm && (

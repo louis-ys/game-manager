@@ -39,16 +39,28 @@ export default function StagesPage() {
   const [title, setTitle] = useState('')
   const [difficulty, setDifficulty] = useState('easy')
   const [status, setStatus] = useState('planning')
+  const [goal, setGoal] = useState('')
+  const [reward, setReward] = useState('')
+  const [description, setDescription] = useState('')
 
   function resetForm() {
     setStageCode('')
     setTitle('')
     setDifficulty('easy')
     setStatus('planning')
+    setGoal('')
+    setReward('')
+    setDescription('')
   }
 
   function handleSave() {
-    if (!stageCode.trim() || !title.trim()) {
+    if (
+      !stageCode.trim() ||
+      !title.trim() ||
+      !goal.trim() ||
+      !reward.trim() ||
+      !description.trim()
+    ) {
       return
     }
 
@@ -64,6 +76,9 @@ export default function StagesPage() {
       title: title.trim(),
       difficulty,
       status,
+      goal: goal.trim(),
+      reward: reward.trim(),
+      description: description.trim(),
     }
 
     setStageList(prev => [...prev, newStage])
@@ -81,9 +96,22 @@ export default function StagesPage() {
     const confirmed = window.confirm(
       'Are you sure you want to delete this stage?'
     )
-    if (confirmed) {
-      setStageList(prev => prev.filter(stage => stage.id !== id))
-    }
+    if (!confirmed) return
+
+    setStageList(prev => prev.filter(stage => stage.id !== id))
+  }
+
+  function handleExportJson() {
+    const jsonString = JSON.stringify(stageList, null, 2)
+    const blob = new Blob([jsonString], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+
+    const link = document.createElement('a')
+    link.href = url
+    link.download = 'stages.json'
+    link.click()
+
+    URL.revokeObjectURL(url)
   }
 
   return (
@@ -96,15 +124,25 @@ export default function StagesPage() {
           </p>
         </div>
 
-        {!showForm && (
+        <div className="flex gap-2">
           <button
             type="button"
-            className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-            onClick={() => setShowForm(true)}
+            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-slate-700 hover:bg-slate-100"
+            onClick={handleExportJson}
           >
-            + Add Stage
+            Export JSON
           </button>
-        )}
+
+          {!showForm && (
+            <button
+              type="button"
+              className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+              onClick={() => setShowForm(true)}
+            >
+              + Add Stage
+            </button>
+          )}
+        </div>
       </header>
 
       {showForm && (
@@ -165,6 +203,41 @@ export default function StagesPage() {
               </select>
             </div>
 
+            <div>
+              <label className="mb-1 block text-sm font-medium">Goal</label>
+              <input
+                type="text"
+                value={goal}
+                onChange={e => setGoal(e.target.value)}
+                className="w-full rounded border border-slate-300 p-2"
+                placeholder="e.g. Clear 10 flower tiles"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-medium">Reward</label>
+              <input
+                type="text"
+                value={reward}
+                onChange={e => setReward(e.target.value)}
+                className="w-full rounded border border-slate-300 p-2"
+                placeholder="e.g. 100 gold"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-medium">
+                Description
+              </label>
+              <textarea
+                value={description}
+                onChange={e => setDescription(e.target.value)}
+                className="w-full rounded border border-slate-300 p-2"
+                rows="3"
+                placeholder="Short description of this stage"
+              />
+            </div>
+
             <div className="flex space-x-2">
               <button
                 type="button"
@@ -204,7 +277,19 @@ export default function StagesPage() {
                   Difficulty: {stage.difficulty}
                 </p>
 
-                <p className="mt-1">
+                <p className="mt-1 text-sm text-slate-500">
+                  Goal: {stage.goal}
+                </p>
+
+                <p className="mt-1 text-sm text-slate-500">
+                  Reward: {stage.reward}
+                </p>
+
+                <p className="mt-1 text-sm text-slate-500">
+                  Description: {stage.description}
+                </p>
+
+                <p className="mt-2">
                   <span className={getStatusClass(stage.status)}>
                     {getStatusLabel(stage.status)}
                   </span>
